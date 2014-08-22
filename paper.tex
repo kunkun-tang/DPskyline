@@ -1,0 +1,99 @@
+%\documentclass{sig-alternate}
+\documentclass[10pt,conference,letterpaper]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{epsfig}
+\usepackage{color}
+\usepackage{amssymb}
+\usepackage{flushend}
+\usepackage{stfloats}
+\usepackage{subfigure}
+\usepackage{url}
+\usepackage{verbatim}
+\usepackage{lipsum}
+\usepackage{multirow}
+\usepackage[T1]{fontenc}
+\usepackage{mathtools}   % loads »amsmath«
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\newenvironment{definition}[1][Definition]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{example}[1][Example]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+\newenvironment{remark}[1][Remark]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}]}{\end{trivlist}}
+
+\newcommand{\listenv}
+{\setlength{\itemsep}{0in}\setlength{\parsep}{0in}}
+
+\newcommand{\fig}[1]{Figure~\ref{#1}}
+\newcommand{\tab}[1]{Table~\ref{#1}}
+\newcommand{\alg}[1]{Algorithm~\ref{#1}}
+\newcommand{\property}[1]{Property~\ref{#1}}
+\newcommand{\sect}[1]{Section~\ref{#1}}
+
+\newtheorem{defn}{Definition}
+\newtheorem{exam}{Example}
+\newtheorem{observ}{Observation}
+\newtheorem{prop}{Property}
+\newtheorem{lema}{Lemma}
+
+\newcommand{\reminder}[1]{{\bf ** #1 **}}
+\newcommand{\eat}[1]{}
+
+
+
+\begin{document}
+
+\title{Efficient Probabilistic Skyline operator over Uncertain data using Mapreduce}
+
+
+\maketitle
+
+\begin{abstract}
+This paper presents an efficient probabilistic skyline algorithm over uncertain data using mapreduce.
+\end{abstract}
+
+\section{Introduction}\label{sec:intro}
+\input{text/intro}
+
+\section{Preliminaries}\label{sec:prelim}
+\input{text/prelim}
+
+\section{A Baseline Method}\label{sec:naive}
+\input{text/naive}
+%
+%\section{Prob Skyline using MapReduce}\label{sec:design}
+%\input{text/design}
+%
+\section{MapReduce Framework}\label{sec:mapreduce}
+\input{text/MapReduce}
+
+\section{Second MapReduce Framework}\label{sec:second}
+\input{text/secondPhase}
+
+\section{Experimental Validation}\label{sec:expr}
+\input{text/expr}
+\input{text/exprTime}
+\input{text/exprNum50K}
+\input{text/exprTime50K}
+%\section{Conclusion}\label{sec:conc}
+%\input{conc}
+
+
+%\section*{Acknowledgements}
+%\input{ack}
+
+\small
+\bibliographystyle{abbrv}
+\bibliography{Ji_citations}
+
+\end{document}

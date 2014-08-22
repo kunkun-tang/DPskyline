@@ -1,0 +1,209 @@
+The whole MapReduce framework has two phases. In the first map phase, instances of objects are evenly mapped to $N$ machines through angle-based partition scheme. In the reduce phase, unqualified objects are filtered out based on pruning rules proposed, as these unqualified objects are not able to be in the $p-$skyline object set. Objects which are not filtered in this phase become candidate objects and outputted in the reduce function. In the second phase of MapReduce, all candidate objects are grouped into several machines based on a novel grid partition, and every object's final skyline probability is computed. $p-$skyline object set is generated.
+
+\subsection{partitioning}
+
+Angle-based space partitioning scheme~\cite{ref:AngularPartition} uses the hyperspherical coordinates of the data points to project data to parallel machines. In the map phase, Angle-based partitioning strategy maps every data point of instance from Cartesian coordinate space to a hyperspherical space, group data based on angular coordinates into N partitions evenly. 
+
+Given a d-dimensional data point $p = [p_1, p_2, \dots, p_d]$, the hyperspherical coordinates of $p$ include a radial coordinate $r$ and $d-1$ angular coordinates $\varphi_1, \varphi_2, \dots, \varphi_{d-1}$~\cite{ref:AngularPartition}, denoted by $\{r, \varphi_1, \varphi_2, \dots, \varphi_{d-1}\}$, where r is the distance to the origin, and $\varphi_i$ represents an angular coordinate $ 0 \leq  \varphi_i \leq \frac{\pi}{2}$. Similarly, an angle-based space partition is represented by $V^A = \{\Phi_1^A, \Phi_2^A, \dots, \Phi_{d-1}^A \}$, where $\Phi_i^A$ is an angle range $[\varphi_i^j,\varphi_i^k]$ in the $i^{th}$ dimension.
+
+In the detailed implementation of the Map Phase, the number of reducers have been defined prior to the launch of the application, and the default partitioning angles $V^A$ has been computed. the whole instance dataset is an input to Map function. In the Map phase, angular coordinates of data point of every instance are computed, and mapped to target reducer.
+
+\subsection{Pruning Power}
+Given an object $O = \{p_1, p_2, \dots, p_m\}$, the bottom left corner of one object $O_{min}$, is represented by a $d-$dimensional virtual point $( \min\limits_{p_i \in O}p_i[1], \min\limits_{p_i \in O}p_i[2], \dots, \min\limits_{p_i \in O}p_i[d])$, where $p_i$ is an instance in $O$. Similarly, $O_{max}$ is the top right corner point of $O$.
+
+\begin{prop}
+\label{prop:1}
+Given two objects $O^a$ and $O^b$, $O^a_{max} \prec O^b_{min}$, $O^b$ is not able to be a skyline object in $p-$ skyline set.
+\end{prop}
+
+
+\begin{prop}
+\label{def:2}
+Given an object $O^a$ and a instance $p \notin O^a$, the instance skyline probability of $p$ must be 0 if $O_{amax} \prec p$.
+\end{prop}
+
+
+\begin{prop}
+\label{def:3}
+Given an object $O^a$ and an instance set whose cardinality $ |O^a| = m$, $O^a$'s instances are mapped into several partitions (machines). Assume a partition $V^A$ has $n$ instances out of $m$ ($n<=m$) for $O_a$, $\{p_1, p_2, \dots, p_n\}$. We use $SKYProb^{+}(O)$ to represent the upper bound of likelihood of object skyline probability. Similarly, $SKYProb^{+}(p)$ denotes the likelihood of instance skyline probability.
+
+
+\begin{equation}
+\label{objectUpper}
+    \begin{aligned}
+SKYProb^{+}(O_a) = & Pr(p_1)SKYProb^{+}(p_1) + \\ 
+& Pr(p_2)SKYProb^{+}(p_2) + \dots + \\
+& Pr(p_n)SKYProb^{+}(p_n)+ \\
+& (1-Pr(p_1) - Pr(p_2) - \dots -Pr(p_n)) 
+    \end{aligned}
+\end{equation}
+
+If $SKYProb^{+}(O_a)$ is less than $p$, we say that $O_a$ can not in the $p-$skyline result.
+
+\end{prop}
+
+\begin{proof}
+The real Skyline Probability of an object $O_a$, 
+\begin{equation}
+    \begin{aligned}
+SKYProb(O_a) = & Pr(p_1)SKYProb(p_1) + \\ 
+& Pr(p_2)SKYProb(p_2) + \dots + \\
+& Pr(p_n)SKYProb(p_n)+ \dots +  \\
+& Pr(p_m)SKYProb(p_m)
+    \end{aligned}
+\end{equation}
+
+\begin{equation}
+    \begin{aligned}
+Pr(p_1)+ Pr(p_2) + \dots Pr(p_m) = 1
+    \end{aligned}
+\end{equation}
+
+Then, 
+\begin{equation}
+    \begin{aligned}
+SKYProb^{+}(O_a) <= & Pr(p_1)SKYProb(p_1) + \\ 
+& Pr(p_2)SKYProb(p_2) + \dots + \\
+& Pr(p_n)SKYProb(p_n)+ \\
+& Pr(p_{n+1}) + \dots + Pr(p_{m})\\
+<= & Pr(p_1)SKYProb^{+}(p_1) + \\ 
+& Pr(p_2)SKYProb^{+}(p_2) + \dots + \\
+& Pr(p_n)SKYProb^{+}(p_n)+ \\
+& (1-Pr(p_1) - Pr(p_2) - \dots -Pr(p_n)) 
+    \end{aligned}
+\end{equation}
+\end{proof}
+
+
+\subsection{Preprocess}
+
+Before MapReduce job is launched, every object $O$'s $O_{min}$ and $O_{max}$ is computed locally by iterating all instances of every object $O$ and computing $O_{min}$ and $O_{max}$ of every object, and stored in a file.
+
+\subsection{First Phase}
+The first map phase maps data points (instances) to $N$ machines according to angular partition scheme. The defined map function computes every instance's hyperspherical coordinate, and maps instances to designated reducer (machine). In addition, if any instance of one object $O$ is mapped to a reducer $V^A$, $O_{min}$ and $O_{max}$ are also transmitted to the partition. Therefore, $O_{min}$ and $O_{max}$ might appear in more than one partitions.
+
+After necessary data is transferred to the reduce phase, only data in this partition is visible. Objects are firstly examined if they can be pruned under the Pruning rule 1. The procedure to examine Pruning rule 1 is as follows. A list $L_{min}$ contains all $O_{min}$ of all objects in this partition; similarly, a list $L_{max}$ contains all $O_{max}$ in this partition. Sort-filter-skyline~\cite{icde/ChomickiGGL03} method is an approach to speed up traditional skyline query by presorting instances. Data point with the sum of all the dimensions of each point is presorted in ascending. The starting element is retrieved from $L_{max}$, and compared with the elements in $L_{min}$ to check the dominance relationship. Any object whose $O_{min}$ is dominated by a $O_{max}$ in $L_{max}$ is filtered, since the object can not be in the $p-$skyline set.
+
+After this, Pruning rule 2 works as follows: we collected remained objects which are not pruned in $L_{min}$. For every instance in these remained objects, we check if a instance in remained objects is dominated by some objects's $O_{max}$. If the dominance relationship occurs, the instance's skyline probability is marked to $0$ for the instance can not become skyline instance.
+
+\subsection{Rectangle Pruning}
+In this subsection, a strategy is proposed to apply Property 3 for filtering unqualified objects in the reduce phase. As we see, in order to compute $SKYProb^{+}(O_a)$ in Equation~\ref{objectUpper}, it is necessary to compute every instance's $SKYProb^{+}(p)$ in this partition $V^A$. Therefore, the challenge comes from how to efficiently obtain $SKYProb^{+}(p)$.
+
+\begin{figure}[t]
+\vspace{-15pt}
+\centering
+  \centerline{\psfig{file=figs/rectExample.eps,width=4.0in}}
+  \caption{Prune 3}
+  \vspace{-15pt}
+  \label{figure:rect}
+\end{figure}
+
+The straightforward method of computing $SKYProb^{+}(p)$ is to iterate every instance in this partition, and compare the dominance relationship between $p$ and every other instances in this partition. The detailed computing procedure is similar to the one in section 3, except that the skyline probability obtained here is the $SKYProb^{+}(p)$ as it only sees incomplete instances. As we already know, the straightforward approach requires high computing complexity.
+
+One interesting observation is that most data points close to right-most boundary are always dominated by left-bottom data points. Take Figure~\ref{figure:rect} as an example. Assume the partition whose angle is between $\phi_1$ and $\phi_2$ is $V^A$ Three pivot points $b_1$, $b_2$ and $b_3$ separate $V^A$ into four areas, denoted by 4 colors, blue, grey, green and red in order. $p$ is an instance located in green area. It is found that $p$ is always dominated by any instance in blue and grey areas since $b_2$ dominates $p$, and $p$ is also affected by partial instances in green area. Similarly, all instances in blue and grey areas and partial instances in green and red areas dominate $q$. According to this observation, we are able to precompute the sum of instance existing probabilities in blue and grey areas, and use the intermediate result for computing skyline probability of $p$ and $q$. Because most points in green and red area are dominated by instances in blue or (both) grey area, precomputing speeds up the skyline probability computing. Therefore, we partition $V^A$ into several areas, and instances in $V^A$ are grouped separately based on area partitioned. Then those left bottom groups of instances contribute to the skyline probability of right-most data points.
+
+
+% \begin{figure}[t]
+% \vspace{-15pt}
+% \centering
+%   \centerline{\psfig{file=figs/onePivot.eps,width=4.0in}}
+%   \caption{One Pivot}
+%   \vspace{-15pt}
+%   \label{figure:onePivot}
+% \end{figure}
+
+Formally, pivot points $P$ is a set of d-dimensional data points, whose cardinality is $m$, $P = \{b_1, b_2, \dots, b_m\}$. 
+%Still, $P$ follows the domination relationship that every element in $P$, that $b_1 \prec b_2$, $b_2 \prec b_3$, $\dots b_{m-1} \prec b_{m}$.
+Correspondingly, $A_i$ is denoted as the d-dimensional hyper-rectangle, left bottom corner of which is the origin, and the top right corner of which is $b_i$. If an instance $p$ is dominated by $b_i$, any instance in $A_i$ dominate $p$.
+
+
+\begin{prop}
+Assume that a data point $g$ is dominated by a pivot point $b_i$, all instances residing in $\{A_i\}$ dominate $g$.
+\end{prop}
+
+\begin{figure}[t]
+\vspace{-15pt}
+\centering
+  \centerline{\psfig{file=figs/computeA_1.eps, width=4.0in}}
+  \caption{Pruning Power}
+  \vspace{-15pt}
+  \label{figure:pruning}
+\end{figure}
+
+Now the problem turns to studying the pruning power of a pivot point $g$. We make the assumption that our dataset is defined in the hypercube $[0,1]^d$ and data points are uniformly distributed. Followed by this assumption, the number of data points located in a region could be represented by the region's volume. To simplify the model of pruning power, only one pivot point divides the angle area $V^A$ to two parts denoted as $A_1$ and $A_2$. $A_1$ lies in the left bottom to g, and $A_2$ lies in the right top to g. Figure 2 depicts the scenario. The pruning power could be represented by how many data points in $A_2$ is able to repeatedly apply $A_1$ without comparing one by one, since intermediate sum of instance probability in $A_1$ has been computed well. Therefore, given a pivot point $g$, the pruning power of $g$ is defined as:
+
+\begin{equation}
+PP(g) = A_1(x_g, y_g, \phi_1, \phi_2) * A_2(x_g, y_g, \phi_1, \phi_2)
+\end{equation}
+where $A_1$ and $A_2$ is two function, which computes corresponding area shown in Figure 2.
+
+In~\cite{ref:AngularPartition}, how to compute $A_2$ is introduced. Three cases are considered in formula induction: one is $0 \leq \phi_1 < \phi_2 \leq \pi/4$, the other is $\pi/4 \leq \phi_1 < \phi_2 \leq \pi/2$, and the final one is $0 \leq \phi_1 \leq \pi/4 \le \phi_2 \leq \pi/2$. The detailed computing formula is in Equation~\ref{Equ:A2}.
+
+\begin{equation}
+\label{Equ:A2}
+A_2 = 
+\begin{cases}
+& \int_{x_g}^{1} \int_{x tan \phi_1}^{x tan \phi_2} dydx- \int_{x_g}^{min(1, \frac{y_g}{tan \phi_1})} \int_{x tan \phi_1}^{y_g} dydx  \\
+& \qquad \qquad \qquad \qquad \qquad \mbox{if } 0 \leq \phi_1 < \phi_2 \leq \pi/4 \\ 
+& A_2(g_y, g_x, \frac{\pi}{2} - \phi_2, \frac{\pi}{2} - \phi_1)\\
+& \qquad \qquad \qquad \qquad \qquad \mbox{if } \pi/4 \leq \phi_1 < \phi_2 \leq \pi/2 \\
+& A_2(x_g, y_g, \phi_1, \frac{\pi}{4}) + A_2(g_y, g_x, \frac{\pi}{2} - \phi_2, \frac{\pi}{4}) \\
+& \qquad \qquad \qquad \qquad \qquad \mbox{if } 0 \leq \phi_1 \leq \pi/4 \le \phi_2 \leq \pi/2
+\end{cases}
+\end{equation}
+
+Similarly, we compute the area of $A_1$. As $y_g = x_g * tan \phi_g$, $A_1$ is the region defined by $0 \le x \le x_g$, and $x tan(\phi_1) \le y \le min(x tan(\phi_2), y_g)$. Therefore, $A_1$ is represented by 
+
+\begin{equation}
+A_1 = \int_{0}^{x_g} \int_{x tan(\phi_1)}^{ min(x tan(\phi_2), y_g) } dydx
+\end{equation}
+
+
+Assume that $0 \leq \phi_1 < \phi_2 \leq \pi/4$, $PP(g)$ is represented by 
+\begin{equation}
+\begin{aligned}
+PP(g) = & (\int_{x_g}^{1} \int_{x tan \phi_1}^{x tan \phi_2} dydx- \int_{x_g}^{min(1, \frac{y_g}{tan \phi_1})} \int_{x tan \phi_1}^{y_g} dydx)  \\
+  & * \int_{0}^{x_g} \int_{x tan(\phi_1)}^{ min(x tan(\phi_2), y_g) } dydx
+\end{aligned}
+\end{equation}
+
+We now evaluate the pruning power of a given point via an experiment. $N = 8$ partitions are defined by $\phi_i$ for $1< i <8$, and the pivot point $g$ is always located in $V^A$. $\phi_i$ is tested only when $0 < \phi_i < \pi/4$. Notice
+that the upper partitions ($\pi/4 < \phi_i < \pi/2$) are symmetrical to these partitions ($0 < \phi_i < \pi/4$). For each $x_g$, we obtain three points where $y_g$ is computed by $y_g = x_g * tan(\phi_g)$ for different $\phi_g$ respectively. Figure~\ref{figure:midLine} shows the cases when three points are located in three positions based on one x value. The points are located in lines at angle of $\phi_1$, $\phi_2$, and the middle line's angle is between $\phi_1$ and $\phi_2$. 
+
+$\phi_1$ and $\phi_2$ is randomly set in the experiment. And the pivot points are selected when $x$ value varies from 0.1 to 0.9. Figure~\ref{figure:testArea} depicts the experiment result. we find that most points in mid lines generate the largest pruning power, compared to points in lines of $\phi_1$ and $\phi_2$.
+
+
+\begin{figure}[t]
+\vspace{-15pt}
+\centering
+  \centerline{\psfig{file=Exper/testArea.eps, width=3.5in}}
+  \caption{line}
+  \vspace{-15pt}
+  \label{figure:testArea}
+\end{figure}
+
+Based on the experiment result, in order to maximize the pruning power of pivot point, we let pivot points lie in a line $L$ at an angle of $\phi_3$, where $\phi_3 = \frac{\phi_1 + \phi_2}{2}$. Given an input number $N_p$ of how many pivot points are put, pivot points are selected every even interval of x. Take Figure~\ref{figure:midLine} as an example. Pivot points are all located in a line at an angle of $\phi_3$, and $b_{i-1}$ dominates b{i}, for $1 \le i  \le n$. As a result, given any point $p$ dominated by $b_i$, instances in $A_i$ dominate $p$ 
+
+\begin{figure}[!b]
+\vspace{-15pt}
+\centering
+  \centerline{\psfig{file=figs/midLine.eps, width=4.0in}}
+  \caption{line}
+  \vspace{-15pt}
+  \label{figure:midLine}
+\end{figure}
+
+The detailed computing procedure is as follows. Pivot points set $P$ is selected based on $N_p$, $\phi_1$ and $\phi_2$ provided. At the beginning of the reduce phase, the local machine knows which objects are in this partition. For each $A_i$, it holds an object vector $V(o_1, o_2, \dots, o_m)$ that maintains the sum of existing instances' probability. Given an instance $p$, we firstly find the nearest pivot point $b_i$ which dominates $p$, and area set $S_A$ which partially dominates $p$. Another object vector $V(o_1, o_2, \dots, o_m)$ is maintained for comparing domination relationship in $S_A$. If any instance in areas of $S_A$, the instance's existing probability is counted to the object vector. Then, aggregated by the object vector of $A_i$ precomputed before, the product of every element in the object vector is the final $SkyProb^+(p)$.
+
+\begin{defn}
+\label{defn:canObj}
+Let $C_o$ be an object set where skyline probability of each object is at least larger than $p$.
+\end{defn}
+
+\begin{defn}
+\label{defn:influnceInst}
+Let $I$ be an instance set where some instance might dominate instances in $C_o$.
+\end{defn}
+
+At the end of the first MapReduce phase, we collect candidate object set $C_o$ and influencing instance set $I$. Definition~\ref{defn:canObj} gives the definition of $C_o$, and any object $o$ with $SkyProb^+(0)$ larger than $p$ is in $C_o$. Definition~\ref{defn:influnceInst} gives the definition of $I$, and any instance $p$ with instance skyline probability $SkyProb(p)$ larger than $0$ is gathered in $C_o$. In the final data gathered after the first MapReduce phase, there are two types of instances remained. In the first case, the instance is belonged to some object in $C_o$ and it is also in $I$. In the second case, the instance is only belong to $I$. As soon as the data is collected, it is able to move forward the merging phase.
+

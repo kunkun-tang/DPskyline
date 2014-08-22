@@ -1,0 +1,256 @@
+In this section, we first evaluate our proposed Rectangle pruning methods on a single node. Then, we implemented our MapReduce Distributed System using Akka for communication between nodes. The introduction of MapReduce framework
+For fair comparison, we developed a single MapReduce phase solution as a baseline solution. All solutions were implemented in Java and Scala.
+
+The experiments were conducted on a 24-node shared-nothing
+cluster. Each node was equipped with one Intel Xeon 2.4 GHz
+processor, 2 GBytes of memory. All nodes were connected by GigaBit
+Ethernet network. We utilized the default configuration in Hadoop.
+Uniform, correlated and anti-related datasets were randomly generated in a
+five-dimensional space. The parallel solutions were executed with
+eight nodes by default. Simulation results were recorded after the
+system model reached a steady state.
+
+\subsection{Summary}
+EX (Exhaustive) is an exhaustive algorithm for computing skyline probability in parallel environment. Our approach use two optimized way to speed up the skyline probability computation: one is Rectangle optimization in the first MapReduce phase, the other is one in the second phase.
+
+\begin{itemize}
+\item vary the object number
+
+\item vary $p$
+
+\item vary dimension
+
+\item how much percent of data is able to be pruned by the first and third pruning rules provided, given the number of partitions, and the number of pivot points. Meanwhile, the response time is measured.
+
+\item Given the number of partitions in the Second MapReduce phase, the response time of the reduce phase is measured.
+
+\item all evaluation has three types of data distribution: Correlated, anti-correlated, independent.
+
+\item communication cost
+
+\end{itemize}
+
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{6 partitions}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition6}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{iD2T2M0C5000} & \multicolumn{3}{|c|}{cD2T2M0C5000} &\multicolumn{3}{|c|}{aD2T2M0C5000} \\\cline{2-10}
+    &  original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3\\\hline\hline
+
+\cline{2-10}
+    1 &  734 & 72 & 43 & 354 & 202 & 35 & 1050  & 532 & 78 \\\hline
+
+\cline{2-10}
+    2 &  893 & 13 & 11 & 1225 & 290 & 15 & 1526 & 663 & 25 \\\hline
+
+\cline{2-10}
+    3 &  1171 & 7 & 5 & 3522 & 347 & 22 & 1651 & 692 & 24 \\\hline
+    
+\cline{2-10}
+    4 &  1175 & 8 & 7 & 3587 & 319& 12 & 1644 & 842 & 34 \\\hline
+
+\cline{2-10}
+    5 &  873 & 20 & 11 & 1321 & 257 & 11 & 1605 & 916 & 37 \\\hline
+
+\cline{2-10}
+    6 &  717 & 84 & 36 & 379 & 106 & 13 & 1154 & 427 & 69 \\\hline
+
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{4 partitions}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition4}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{iD2T2M0C5000} & \multicolumn{3}{|c|}{cD2T2M0C5000} &\multicolumn{3}{|c|}{aD2T2M0C5000} \\\cline{2-10}
+    &  original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3\\\hline\hline
+
+\cline{2-10}
+    1 &  1101 & 72 & 41 & 726 & 268 & 35 & 1480 & 519 & 85 \\\hline
+
+\cline{2-10}
+    2 &  1563 & 8 & 8 & 3689 & 383 & 23 & 2027 & 818 & 39 \\\hline
+
+\cline{2-10}
+    3 &  1583 & 9 & 7 & 3766 & 357 & 12 & 2083 & 967 & 54 \\\hline
+    
+\cline{2-10}
+    4 &  1089 & 69 & 38 & 753 & 137 & 15 & 1622 & 549 & 88 \\\hline
+    
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{2 partitions}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition4}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{iD2T2M0C5000} & \multicolumn{3}{|c|}{cD2T2M0C5000} &\multicolumn{3}{|c|}{aD2T2M0C5000} \\\cline{2-10}
+    &  original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3\\\hline\hline
+
+\cline{2-10}
+    1 &  2577 & 73 & 38 & 3762 & 398 & 44 & 2834 & 842 & 112 \\\hline
+
+\cline{2-10}
+    2 &  2511 & 72 & 38 & 3844 & 221 & 22 & 2964 & 957 & 131 \\\hline
+    
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{6 partitions in Three Dimension}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition6inThree}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{iD2T2M0C5000} & \multicolumn{3}{|c|}{cD2T2M0C5000} &\multicolumn{3}{|c|}{aD2T2M0C5000} \\\cline{2-10}
+    &  original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3\\\hline\hline
+
+\cline{2-10}
+    1 &  1106 & 17 & 10 & 1066 & 187 & 146 & 1126  & 19 & 9 \\\hline
+
+\cline{2-10}
+    2 &  1149 & 14 & 10 & 387 & 57 & 40 & 1152 & 14 & 12 \\\hline
+
+\cline{2-10}
+    3 &  750 & 13 & 8 & 1171 & 234 & 186 & 748 & 15 & 11 \\\hline
+    
+\cline{2-10}
+    4 &  1132 & 12 & 2 & 1092 & 180& 155 & 1131 & 16 & 4 \\\hline
+    
+\cline{2-10}
+    5 &  1266 & 14 & 13 & 367 & 57 & 37 & 1255 & 14 & 8 \\\hline
+    
+\cline{2-10}
+    6 &  789 & 13 & 14 & 1267 & 212 & 179 & 788 & 15 & 10 \\\hline
+
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{4 partitions in Three Dimension}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition4inThree}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{iD2T2M0C5000} & \multicolumn{3}{|c|}{cD2T2M0C5000} &\multicolumn{3}{|c|}{aD2T2M0C5000} \\\cline{2-10}
+    &  original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3\\\hline\hline
+
+\cline{2-10}
+    1 &  1413 & 61 & 44 & 1392 & 211 & 171 & 2081 & 6 & 5 \\\hline
+
+\cline{2-10}
+    2 &  1159 & 66 & 37 & 1171 & 223 & 185 & 748 & 5 & 5 \\\hline
+
+\cline{2-10}
+    3 &  1447 & 63 & 35 & 1399 & 194 & 160 & 2176 & 9 & 8 \\\hline
+    
+\cline{2-10}
+    4 &  1228 & 92 & 46 & 1267 & 202 & 173 & 788 & 8 & 7 \\\hline
+    
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{2 partitions in Three Dimension}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition4InThree}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{iD2T2M0C5000} & \multicolumn{3}{|c|}{cD2T2M0C5000} &\multicolumn{3}{|c|}{aD2T2M0C5000} \\\cline{2-10}
+    &  original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3\\\hline\hline
+
+\cline{2-10}
+    1 &  2523 & 116 & 83 & 2505 & 428 & 348 & 2670 & 26 & 7 \\\hline
+
+\cline{2-10}
+    2 &  2603 & 149 & 84 & 2608 & 387 & 333 & 2792 & 16 & 6 \\\hline
+    
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+

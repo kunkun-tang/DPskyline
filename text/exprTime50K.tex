@@ -1,0 +1,253 @@
+
+\clearpage
+
+\vspace*{50pt}
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{6 partitions (Time: us)}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition6}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{cD2T2M0C50000} & \multicolumn{3}{|c|}{iD2T2M0C50000} &\multicolumn{3}{|c|}{aD2T2M0C50000} \\\cline{2-10}
+    &  naive(ms) & prune1-2(ms) & prune1-2-3(ms) & naive(ms) & prune1-2(ms) & prune1-2-3(ms) & naive(ms) & prune1-2(ms) & prune1-2-3(ms) \\\hline \hline
+
+\cline{2-10}
+    1 &  666 & 81 & 1307 & 354417 & 3752 & 7206 & 445281  & 3570 & 6284 \\\hline
+
+\cline{2-10}
+    2 &  139598 & 152 & 1295 & 461749 & 506 & 1711 & 565292 & 550 & 1671 \\\hline
+
+\cline{2-10}
+    3 &  4038701 & 1231 & 2915 & 845655 & 247 & 1450 & 632030 & 649 & 1702 \\\hline
+    
+\cline{2-10}
+    4 &  3936687 & 1327 & 2761 & 883083 & 358 & 1555 & 643929 & 597 & 1643 \\\hline
+    
+\cline{2-10}
+    5 &  143735 & 124 & 1049 & 48208 &  428 & 1553 & 627326 & 748 & 1828 \\\hline
+    
+\cline{2-10}
+    6 &  484 & 60 & 825 & 338058 & 2196 & 3549 & 450133 & 4001 & 6177 \\\hline
+
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{4 partitions (Time: us)}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition4}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{cD2T2M0C5000} & \multicolumn{3}{|c|}{iD2T2M0C5000} &\multicolumn{3}{|c|}{aD2T2M0C5000} \\\cline{2-10}
+    &  naive(ms) & prune1-2(ms) & prune1-2-3(ms) & naive(ms) & prune1-2(ms) & prune1-2-3(ms) & naive(ms) & prune1-2(ms) & prune1-2-3(ms) \\\hline \hline
+
+\cline{2-10}
+    1 &  11369 & 119 & 1536 & 844773 & 5721 & 8986 & 1045580 & 5222 & 8040 \\\hline
+
+\cline{2-10}
+    2 &  4859706 & 1166 & 3207 & 1601874 & 667 & 1924 & 1367131 & 1266 & 2541 \\\hline
+
+\cline{2-10}
+    3 &  4806449 & 1230 & 3016 & 1660244 & 674 & 1895 & 1390984 & 1250 & 2475 \\\hline
+    
+\cline{2-10}
+    4 &  11858 & 67 & 923 & 821776 & 3250 & 4662 & 1148428 & 6292 & 8563 \\\hline
+    
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{4 partitions with 5K |O| in MapReduce (Time: ms)}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition6}
+  \begin{tabular}{|c||c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{2}{|c|}{cD2T2M0C50000} & \multicolumn{2}{|c|}{iD2T2M0C50000} &\multicolumn{2}{|c|}{aD2T2M0C50000} \\\cline{2-7}
+    &  Map & Reduce & Map & Reduce & Map & Reduce \\\hline\hline
+
+\cline{2-7}
+    1 &  3k & 9k & 3k & 14k & 3k & 22k \\\hline
+
+\cline{2-7}
+    2 &  3k & 26k & 3k & 16k & 3k & 36k \\\hline
+
+\cline{2-7}
+    3 &  3k & 26k & 3k & 15k & 3k & 34k  \\\hline
+    
+\cline{2-7}
+    4 &  3k & 9k & 3k & 14k & 3k & 24k  \\\hline
+
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{6 partitions with 5K |O| in MapReduce (Time: ms)}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition6}
+  \begin{tabular}{|c||c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{2}{|c|}{cD2T2M0C5000} & \multicolumn{2}{|c|}{iD2T2M0C5000} &\multicolumn{2}{|c|}{aD2T2M0C5000} \\\cline{2-7}
+    &  Map & Reduce & Map & Reduce & Map & Reduce \\\hline\hline
+
+
+\cline{2-7}
+    1 &  3k & 6k & 3k & 12k & 3k & 19k \\\hline
+
+\cline{2-7}
+    2 &  3k & 12k & 3k & 13k & 3k & 21k \\\hline
+
+\cline{2-7}
+    3 &  3k & 20k & 3k & 13k & 3k & 31k  \\\hline
+
+\cline{2-7}
+    4 &  3k & 20k & 3k & 14k & 3k & 32k  \\\hline
+
+\cline{2-7}
+    5 &  3k & 12k & 3k & 12k & 3k & 23k  \\\hline
+
+\cline{2-7}
+    6 &  3k & 6k & 3k & 11k & 3k & 19k  \\\hline
+
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{4 partitions with 50K |O| in MapReduce (Time: ms)}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition6}
+  \begin{tabular}{|c||c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{2}{|c|}{cD2T2M0C50000} & \multicolumn{2}{|c|}{iD2T2M0C50000} &\multicolumn{2}{|c|}{aD2T2M0C50000} \\\cline{2-7}
+    &  Map & Reduce & Map & Reduce & Map & Reduce \\\hline\hline
+
+\cline{2-7}
+    1 & 8k & 7k  & 8k & 907k & 8k & 2284k \\\hline
+
+\cline{2-7}
+    2 & 8k & 3835k  & 8k & 2107k & 8k & 2612k \\\hline
+
+\cline{2-7}
+    3 & 8k & 3889k  & 8k & 2045k & 8k & 2632k  \\\hline
+    
+\cline{2-7}
+    4 & 8k & 7k  & 8k & 968k & 8k & 2325k  \\\hline
+
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{6 partitions with 50K |O| in MapReduce (Time: ms)}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition6}
+  \begin{tabular}{|c||c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{2}{|c|}{cD2T2M0C50000} & \multicolumn{2}{|c|}{iD2T2M0C50000} &\multicolumn{2}{|c|}{aD2T2M0C50000} \\\cline{2-7}
+    &  Map & Reduce & Map & Reduce & Map & Reduce \\\hline\hline
+
+
+\cline{2-7}
+    1 &  8k & 6k & 8k & 801k & 8k & 2054k \\\hline
+
+\cline{2-7}
+    2 &  8k & 923k & 8k & 1749k & 8k & 2512k \\\hline
+
+\cline{2-7}
+    3 &  8k & 2634k & 8k & 1705k & 8k & 2512k  \\\hline
+
+\cline{2-7}
+    4 &  8k & 2988k & 8k & 1877k & 8k & 2606k  \\\hline
+
+\cline{2-7}
+    5 &  8k & 883k & 8k & 1793k & 8k & 2443k  \\\hline
+
+\cline{2-7}
+    6 &  8k & 6k & 8k & 786k & 8k & 1991k  \\\hline
+
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}

@@ -1,0 +1,123 @@
+% \begin{table*}
+% \centering
+% \makeatletter
+%     \long\def\@makecaption#1#2{%
+%         \vskip\abovecaptionskip
+%         \centering
+%         #1 #2\par
+%         \vskip\belowcaptionskip}
+% \makeatother
+%   \caption{4 partitions with 5K |O| in MapReduce}
+%     \vspace*{3pt}
+%   \footnotesize
+
+%   \label{table:asdf}
+%   \begin{tabular}{|c||c|c|c|c|c|c|}
+%   \hline
+%   \multirow{2}{*}{Partition} &  \multicolumn{2}{|c|}{cD2T2M0C5000} & \multicolumn{2}{|c|}{iD2T2M0C5000} &\multicolumn{2}{|c|}{aD2T2M0C5000} \\\cline{2-7}
+%     &  Map & Reduce & Map & Reduce & Map & Reduce \\\hline\hline
+
+% \cline{2-7}
+%     1 &  3k & 6k & 3k & 12k & 3k & 19k \\\hline
+
+% \cline{2-7}
+%     2 &  3k & 12k & 3k & 13k & 3k & 21k \\\hline
+
+% \cline{2-7}
+%     3 &  3k & 20k & 3k & 13k & 3k & 31k  \\\hline
+
+% \cline{2-7}
+%     4 &  3k & 20k & 3k & 14k & 3k & 32k  \\\hline
+
+% \cline{2-7}
+%     5 &  3k & 12k & 3k & 12k & 3k & 23k  \\\hline
+
+% \cline{2-7}
+%     6 &  3k & 6k & 3k & 11k & 3k & 19k  \\\hline
+
+%   \end{tabular}
+%   \vspace*{-17pt}
+% \end{table*}
+
+
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{6 partitions with 50K |O|}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition6}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{cD2T2M0C50000} & \multicolumn{3}{|c|}{iD2T2M0C50000} &\multicolumn{3}{|c|}{aD2T2M0C50000} \\\cline{2-10}
+    &  original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3\\\hline\hline
+
+\cline{2-10}
+    1 &  292 & 28 & 13 & 7213 & 384 & 65 & 7808  & 322 & 77 \\\hline
+
+\cline{2-10}
+    2 &  4741 & 56 & 18 & 8835 & 81 & 21 & 9257 & 39 & 17 \\\hline
+
+\cline{2-10}
+    3 &  24034 & 56 & 19 & 11722 & 41 & 10 & 9917 & 35 & 20 \\\hline
+    
+\cline{2-10}
+    4 &  23902 & 72 & 17 & 11873 & 45 & 19 & 9913 & 42 & 14 \\\hline
+
+\cline{2-10}
+    5 &  4881 & 52 & 12 & 8886 & 77 & 15 & 9500 & 58 & 22 \\\hline
+
+\cline{2-10}
+    6 &  322 & 39 & 15 & 7073 & 189 & 70 & 8001 & 321 & 48 \\\hline
+
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
+
+\begin{table*}[t]
+%\vspace*{-15pt}
+  \centering
+\makeatletter
+    \long\def\@makecaption#1#2{%
+        \vskip\abovecaptionskip
+        \centering
+        #1 #2\par
+        \vskip\belowcaptionskip}
+\makeatother
+  \caption{4 partitions with 50K |O|}
+    \vspace*{3pt}
+  \footnotesize
+
+  \label{table:partition4}
+  \begin{tabular}{|c||c|c|c|c|c|c|c|c|c|}
+  \hline
+  \multirow{2}{*}{Partition} &  \multicolumn{3}{|c|}{cD2T2M0C50000} & \multicolumn{3}{|c|}{iD2T2M0C50000} &\multicolumn{3}{|c|}{aD2T2M0C50000} \\\cline{2-10}
+    &  original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3 & original No. & after Prune1 & after Prune3\\\hline\hline
+
+\cline{2-10}
+    1 &  1486 & 33 & 17 & 10956 & 389 & 66 & 12029 & 331 & 83 \\\hline
+
+\cline{2-10}
+    2 &  26485 & 59 & 23 & 15784 & 49 & 13 & 14127 & 37 & 27 \\\hline
+
+\cline{2-10}
+    3 &  26480 & 68 & 18 & 15974 & 63 & 18 & 14191 & 65 & 27 \\\hline
+    
+\cline{2-10}
+    4 &  1538 & 52 & 17 & 10878 & 194 & 69 & 12394 & 325 & 51 \\\hline
+    
+  \end{tabular}
+  \vspace*{-17pt}
+\end{table*}
+
