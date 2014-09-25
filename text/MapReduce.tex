@@ -1,93 +1,103 @@
-The whole MapReduce framework has two phases. In the first map phase, instances of objects are evenly mapped to $N$ machines through angle-based partition scheme. In the reduce phase, unqualified objects are filtered out based on pruning rules proposed, as these unqualified objects are not able to be in the $p-$skyline object set. Objects which are not filtered in this phase become candidate objects and outputted in the reduce function. In the second phase of MapReduce, all candidate objects are grouped into several machines based on a novel grid partition, and every object's final skyline probability is computed. $p-$skyline object set is generated.
+To overcome the above challenges, we propose a two-phase MapReduce framework, as shown in Figure~\ref{figure:framework}. In the first phase(See Section~\ref{firstPhase}), instances of objects are evenly mapped to $N$ machines through angle-based partition scheme, and unqualified objects are filtered out based on Rectangle pruning rules, as these unqualified objects are not able to be in the $p-$skyline object set. Objects which are not filtered in this phase become candidate objects and are outputted in the reduce function. In the second phase(See Section~\ref{secondPhase}), all candidate objects are grouped into several machines based on a novel grid partition, and object skyline probability is computed locally in separate machine. After that, $p-$skyline object set is easily obtained.
+\begin{figure*}[t]
+\centering
+  \includegraphics[width=0.9\textwidth]{figs/framework.eps}
+  \vspace*{-10pt}
+  \caption{An overview of parallel skyline processing using MapReduce.}
+  \vspace*{-15pt}
+  \label{figure:framework}
+\end{figure*}
 
-\subsection{partitioning}
+\subsection{Partitioning}
 
-Angle-based space partitioning scheme~\cite{ref:AngularPartition} uses the hyperspherical coordinates of the data points to project data to parallel machines. In the map phase, Angle-based partitioning strategy maps every data point of instance from Cartesian coordinate space to a hyperspherical space, group data based on angular coordinates into N partitions evenly. 
+Angle-based space partitioning scheme~\cite{ref:AngularPartition} transforms data point from Cartesian coordinate to hyperspherical coordinate. In the first map phase, we use angle-based partitioning strategy to map data points into N partitions. The main advantage of angular transformation is that this strategy being able to filter data points as much as it can since the left bottom corner data points dominate most other data points in an angle.
 
 Given a d-dimensional data point $p = [p_1, p_2, \dots, p_d]$, the hyperspherical coordinates of $p$ include a radial coordinate $r$ and $d-1$ angular coordinates $\varphi_1, \varphi_2, \dots, \varphi_{d-1}$~\cite{ref:AngularPartition}, denoted by $\{r, \varphi_1, \varphi_2, \dots, \varphi_{d-1}\}$, where r is the distance to the origin, and $\varphi_i$ represents an angular coordinate $ 0 \leq  \varphi_i \leq \frac{\pi}{2}$. Similarly, an angle-based space partition is represented by $V^A = \{\Phi_1^A, \Phi_2^A, \dots, \Phi_{d-1}^A \}$, where $\Phi_i^A$ is an angle range $[\varphi_i^j,\varphi_i^k]$ in the $i^{th}$ dimension.
 
-In the detailed implementation of the Map Phase, the number of reducers have been defined prior to the launch of the application, and the default partitioning angles $V^A$ has been computed. the whole instance dataset is an input to Map function. In the Map phase, angular coordinates of data point of every instance are computed, and mapped to target reducer.
+In term with the detailed implementation of the Map Phase, the number of reducers have been defined prior to the launch of the application, and the default partitioning angles $V^A$ has been computed. The whole instance dataset is an input to Map function. 
+
+% In the Map phase, angular coordinates of data point of every instance are computed, and mapped to target reducer.
 
 \subsection{Pruning Power}
-Given an object $O = \{p_1, p_2, \dots, p_m\}$, the bottom left corner of one object $O_{min}$, is represented by a $d-$dimensional virtual point $( \min\limits_{p_i \in O}p_i[1], \min\limits_{p_i \in O}p_i[2], \dots, \min\limits_{p_i \in O}p_i[d])$, where $p_i$ is an instance in $O$. Similarly, $O_{max}$ is the top right corner point of $O$.
+Given an object $O = \{p_1, p_2, \dots, p_m\}$, the minimum corner of one object $O_{min}$, is represented by a $d-$dimensional virtual point $( \min\limits_{p_i \in O}p_i[1], \min\limits_{p_i \in O}p_i[2], \dots, \min\limits_{p_i \in O}p_i[d])$, where $p_i$ is an instance in $O$. Similarly, $O_{max}$ is a maximum corner point.
 
-\begin{prop}
-\label{prop:1}
-Given two objects $O^a$ and $O^b$, $O^a_{max} \prec O^b_{min}$, $O^b$ is not able to be a skyline object in $p-$ skyline set.
-\end{prop}
+\vspace{5 mm}
+\begin{lemma}
+\label{lemma:1}
+Given $O^a, O^b \in O$, \emph{if} $O^a_{max} \prec O^b_{min}$, then $SKYProb(O^b) = 0$, $O^b \notin PSKY(OS)$.
+\end{lemma}
 
+\vspace{5 mm}
 
-\begin{prop}
-\label{def:2}
-Given an object $O^a$ and a instance $p \notin O^a$, the instance skyline probability of $p$ must be 0 if $O_{amax} \prec p$.
-\end{prop}
+\begin{lemma}
+\label{lemma:2}
+Given $O^a \in O$, an instance $p \notin O^a$, \emph{if} $O^a_{max} \prec p$, $SKYProb(p) = 0$.
+\end{lemma}
 
+\vspace{5 mm}
 
-\begin{prop}
-\label{def:3}
-Given an object $O^a$ and an instance set whose cardinality $ |O^a| = m$, $O^a$'s instances are mapped into several partitions (machines). Assume a partition $V^A$ has $n$ instances out of $m$ ($n<=m$) for $O_a$, $\{p_1, p_2, \dots, p_n\}$. We use $SKYProb^{+}(O)$ to represent the upper bound of likelihood of object skyline probability. Similarly, $SKYProb^{+}(p)$ denotes the likelihood of instance skyline probability.
+The proof of Lemma~\ref{lemma:1} and Lemma~\ref{lemma:2} is obvious and omitted.
+Besides, we compute the probability of one object $O_a$ being a skyline object with partially seen data. And the upper bound of it is denoted by $SKYProb^{+}(O)$. Similarly, $SKYProb^{+}(p)$ represents the probability of an instance $p$ being a skyline instance.
 
+\vspace{5 mm}
+
+\begin{lemma}
+\label{lemma:3}
+Given $O^a \in O$, $O^a=\{p_1, p_2, \dots, p_m\}$, $|O^a| = m$, $O^a$'s instances are mapped into several partitions (machines). Assume partition $V^A$ has $n$ instances out of $m$ ($n<=m$) for $O_a$, containing instances $\{p_1, p_2, \dots, p_n\}$. Then:
 
 \begin{equation}
 \label{objectUpper}
     \begin{aligned}
-SKYProb^{+}(O_a) = & Pr(p_1)SKYProb^{+}(p_1) + \\ 
-& Pr(p_2)SKYProb^{+}(p_2) + \dots + \\
-& Pr(p_n)SKYProb^{+}(p_n)+ \\
-& (1-Pr(p_1) - Pr(p_2) - \dots -Pr(p_n)) 
+PrSKY^{+}(O_a) = 1 - \sum\limits_{i=1}^n Pr(p_i)(SKYProb^+(p_i)-1)
     \end{aligned}
 \end{equation}
 
-If $SKYProb^{+}(O_a)$ is less than $p$, we say that $O_a$ can not in the $p-$skyline result.
+\emph{if} $SKYProb^{+}(O_a) < p$, then $O_a \notin PSKY(OS)$.
 
-\end{prop}
+\end{lemma}
 
 \begin{proof}
-The real Skyline Probability of an object $O_a$, 
+The Skyline Probability of an object $O_a$ is denoted as:
 \begin{equation}
     \begin{aligned}
-SKYProb(O_a) = & Pr(p_1)SKYProb(p_1) + \\ 
-& Pr(p_2)SKYProb(p_2) + \dots + \\
-& Pr(p_n)SKYProb(p_n)+ \dots +  \\
-& Pr(p_m)SKYProb(p_m)
+SKYProb(O_a) = \sum\limits_{i=1}^n Pr(p_i)(SKYProb(p_i))
     \end{aligned}
 \end{equation}
 
 \begin{equation}
     \begin{aligned}
-Pr(p_1)+ Pr(p_2) + \dots Pr(p_m) = 1
+\sum\limits_{i=1}^n Pr(p_i) = 1
     \end{aligned}
 \end{equation}
 
 Then, 
 \begin{equation}
     \begin{aligned}
-SKYProb^{+}(O_a) <= & Pr(p_1)SKYProb(p_1) + \\ 
-& Pr(p_2)SKYProb(p_2) + \dots + \\
-& Pr(p_n)SKYProb(p_n)+ \\
-& Pr(p_{n+1}) + \dots + Pr(p_{m})\\
-<= & Pr(p_1)SKYProb^{+}(p_1) + \\ 
-& Pr(p_2)SKYProb^{+}(p_2) + \dots + \\
-& Pr(p_n)SKYProb^{+}(p_n)+ \\
-& (1-Pr(p_1) - Pr(p_2) - \dots -Pr(p_n)) 
+& SKYProb^{+}(O_a) \\
+& <= \sum\limits_{i=1}^n Pr(p_i)(SKYProb(p_i)) +
+\sum\limits_{i=n+1}^m Pr(p_i) \\
+& <= \sum\limits_{i=1}^n Pr(p_i)(SKYProb^+(p_i)) +
+1 - \sum\limits_{i=1}^n Pr(p_i) \\
+& = 1 - \sum\limits_{i=1}^n Pr(p_i)(SKYProb^+(p_i)-1)
     \end{aligned}
 \end{equation}
 \end{proof}
 
 
-\subsection{Preprocess}
-
-Before MapReduce job is launched, every object $O$'s $O_{min}$ and $O_{max}$ is computed locally by iterating all instances of every object $O$ and computing $O_{min}$ and $O_{max}$ of every object, and stored in a file.
-
 \subsection{First Phase}
-The first map phase maps data points (instances) to $N$ machines according to angular partition scheme. The defined map function computes every instance's hyperspherical coordinate, and maps instances to designated reducer (machine). In addition, if any instance of one object $O$ is mapped to a reducer $V^A$, $O_{min}$ and $O_{max}$ are also transmitted to the partition. Therefore, $O_{min}$ and $O_{max}$ might appear in more than one partitions.
+\label{firstPhase}
+Before the first phase MapReduce job is launched, every object $O$'s $O_{min}$ and $O_{max}$ is computed locally by iterating all objects and computing $O_{min}$ and $O_{max}$ of every object.
 
-After necessary data is transferred to the reduce phase, only data in this partition is visible. Objects are firstly examined if they can be pruned under the Pruning rule 1. The procedure to examine Pruning rule 1 is as follows. A list $L_{min}$ contains all $O_{min}$ of all objects in this partition; similarly, a list $L_{max}$ contains all $O_{max}$ in this partition. Sort-filter-skyline~\cite{icde/ChomickiGGL03} method is an approach to speed up traditional skyline query by presorting instances. Data point with the sum of all the dimensions of each point is presorted in ascending. The starting element is retrieved from $L_{max}$, and compared with the elements in $L_{min}$ to check the dominance relationship. Any object whose $O_{min}$ is dominated by a $O_{max}$ in $L_{max}$ is filtered, since the object can not be in the $p-$skyline set.
+The first map phase maps data points (instances) to $N$ machines based on angular partition scheme. The defined map function computes every instance's hyperspherical coordinate, and maps instances to designated reducer (machine). In addition, if any instance of one object $O$ is mapped to a reducer $V^A$, maximum and minimum corner of $O$ ($O_{min}$ and $O_{max}$) is also transmitted to the partition. Therefore, $O_{min}$ and $O_{max}$ of one object might appear in more than one partitions, since instances of one object are distributed in more than one partitions.
 
-After this, Pruning rule 2 works as follows: we collected remained objects which are not pruned in $L_{min}$. For every instance in these remained objects, we check if a instance in remained objects is dominated by some objects's $O_{max}$. If the dominance relationship occurs, the instance's skyline probability is marked to $0$ for the instance can not become skyline instance.
+During the reduce phase, only data in this partition (data in $V^A$) is visible. Objects are firstly examined if some of them is able to be pruned under the Pruning rule 1. The procedure to examine Pruning rule 1 works as follows. A list $L_{min}$ contains all $O_{min}$ of all objects in this partition; similarly, a list $L_{max}$ contains all $O_{max}$ in this partition. Sort-filter-skyline~\cite{icde/ChomickiGGL03} method is an approach to speed up traditional skyline query by presorting instances. Using $SFS$, data points with the sum of all the dimensions of each point is presorted in ascending. The starting element is retrieved from $L_{max}$, and compared with the elements in $L_{min}$ to check the dominance relationship. Any object whose $O_{min}$ is dominated by any $O_{max}$ in $L_{max}$ is pruned, since it can not be in the $p-$skyline set.
+
+After this, Pruning rule 2 works as follows. In every reducer, we collected remained objects which are not pruned in $L_{min}$. For every instance in these remained objects, we check if an instance $p$ is dominated by some objects's $O_{max}$. If the dominance relationship occurs ($O_{max} \prec p$), $SKYProb(p)$ is marked to $0$ for the instance and it denotes that $p$ can not become skyline instance.
 
 \subsection{Rectangle Pruning}
-In this subsection, a strategy is proposed to apply Property 3 for filtering unqualified objects in the reduce phase. As we see, in order to compute $SKYProb^{+}(O_a)$ in Equation~\ref{objectUpper}, it is necessary to compute every instance's $SKYProb^{+}(p)$ in this partition $V^A$. Therefore, the challenge comes from how to efficiently obtain $SKYProb^{+}(p)$.
+\label{secondPhase}
+In this subsection, we propose a novel strategy to apply Lemma~\ref{lemma:3} to filter unqualified objects in partition $V^A$. As we see in Equation~\ref{objectUpper}, before $SKYProb^{+}(O_a)$ is computed, every instance's $SKYProb^{+}(p)$ contained in this partition is computed. Therefore, the challenge comes from how to efficiently collect the probability of every instance $p$ being a skyline instance.
+The straightforward method of computing $SKYProb^{+}(p)$ is to iterate every instance in this partition, and compare the dominance relationship between $p$ and every other local instances in this partition. The computing complexity is obviously high as $O(n^2)$.
 
 \begin{figure}[t]
 \vspace{-15pt}
@@ -98,28 +108,12 @@ In this subsection, a strategy is proposed to apply Property 3 for filtering unq
   \label{figure:rect}
 \end{figure}
 
-The straightforward method of computing $SKYProb^{+}(p)$ is to iterate every instance in this partition, and compare the dominance relationship between $p$ and every other instances in this partition. The detailed computing procedure is similar to the one in section 3, except that the skyline probability obtained here is the $SKYProb^{+}(p)$ as it only sees incomplete instances. As we already know, the straightforward approach requires high computing complexity.
+One interesting observation is that data points close to maximum boundary are often dominated by data points close to minimum boundary. The intuitive idea is to associate data points close together into a group. Pre-computing is done in the group before probabilistic skyline process is launched. Data points fully dominated by the group is able to speed up processing by repeatedly applying the pre-computed information.
 
-One interesting observation is that most data points close to right-most boundary are always dominated by left-bottom data points. Take Figure~\ref{figure:rect} as an example. Assume the partition whose angle is between $\phi_1$ and $\phi_2$ is $V^A$ Three pivot points $b_1$, $b_2$ and $b_3$ separate $V^A$ into four areas, denoted by 4 colors, blue, grey, green and red in order. $p$ is an instance located in green area. It is found that $p$ is always dominated by any instance in blue and grey areas since $b_2$ dominates $p$, and $p$ is also affected by partial instances in green area. Similarly, all instances in blue and grey areas and partial instances in green and red areas dominate $q$. According to this observation, we are able to precompute the sum of instance existing probabilities in blue and grey areas, and use the intermediate result for computing skyline probability of $p$ and $q$. Because most points in green and red area are dominated by instances in blue or (both) grey area, precomputing speeds up the skyline probability computing. Therefore, we partition $V^A$ into several areas, and instances in $V^A$ are grouped separately based on area partitioned. Then those left bottom groups of instances contribute to the skyline probability of right-most data points.
+Take 2-dimensional data as an example (See Figure~\ref{figure:rect}). Assume the angle of partition $V^A$ is between $\phi_1$ and $\phi_2$. Three virtual data points $b_1$, $b_2$ and $b_3$ separate $V^A$ into four areas, denoted by 4 colors, blue, grey, green and red in order. Every point stands at the maximum corner of a bounding box. $p$ is an instance located in green area. It is observed that $p$ is always dominated by any instance in blue and grey areas since $b_2$ dominates $p$, and $p$ is also affected by partial instances in green area. Similarly, all instances in blue and grey areas and partial instances in green and red areas dominate $q$. According to this observation, we are able to precompute the sum of existing instance probabilities in blue and grey areas, and use the intermediate result for computing $SKYProb^{+}(p)$ and $SKYProb^{+}(q)$. Obviously it is able to speed up the skyline probability computing. 
 
+We use pivot point set $P$ to represent the virtual data points (in Figure~\ref{figure:rect}), defined as a set of d-dimensional data points whose cardinality is m, $P=\{b_1, b_2, \dots, b_m\}$. $A_i$ is denoted as the d-dimensional hyper-rectangle, the minimum corner of which is the origin, and the maximum corner of which is $b_i$. If some point is dominated by $b_i$, it is dominated by any instance in $A_i$. Formally let each area $A_i$ consists of an n-dimensional vector $V_i = [p_{r1}, p_{r2}, \dots, p_{rn}]$, where $n$ is the number of objects in this partition (reducer), and each element $p_{ri}$ is the sum of instance probability for object $O_i$. These vectors is able to repeatedly contribute to the skyline probability of data points.  
 
-% \begin{figure}[t]
-% \vspace{-15pt}
-% \centering
-%   \centerline{\psfig{file=figs/onePivot.eps,width=4.0in}}
-%   \caption{One Pivot}
-%   \vspace{-15pt}
-%   \label{figure:onePivot}
-% \end{figure}
-
-Formally, pivot points $P$ is a set of d-dimensional data points, whose cardinality is $m$, $P = \{b_1, b_2, \dots, b_m\}$. 
-%Still, $P$ follows the domination relationship that every element in $P$, that $b_1 \prec b_2$, $b_2 \prec b_3$, $\dots b_{m-1} \prec b_{m}$.
-Correspondingly, $A_i$ is denoted as the d-dimensional hyper-rectangle, left bottom corner of which is the origin, and the top right corner of which is $b_i$. If an instance $p$ is dominated by $b_i$, any instance in $A_i$ dominate $p$.
-
-
-\begin{prop}
-Assume that a data point $g$ is dominated by a pivot point $b_i$, all instances residing in $\{A_i\}$ dominate $g$.
-\end{prop}
 
 \begin{figure}[t]
 \vspace{-15pt}
