@@ -27,8 +27,11 @@ Finally, for object \(O_{v}\), we are able to obtain the skyline probability tha
 SKYProb(O{v}) = \sum_{p \in O_{v}} Pr(p)SKY Prob(p)
 \end{equation}
 
-Rather than obtaining the objects whose \(SKYProb(O)\) is larger than a threshold \(p\)~\cite{pei2007}~\cite{ding2012}, we compute every object's \(SKYProb(O)\). Our target is the same as ~\cite{atallah2009}~\cite{kim2011}.
+Given a threshold \(t\), we obtain a object set $Or$, where $SKYProb(O_v)$ of every object is larger than $p$. That is,
+\begin{equation}
+\label{equ_threshold}
+PSKY(OS) = \{ o \in OS|SKYProb(o)>t \}
+\end{equation}
 
 \subsection{MapReduce framework} %refer FEFEILI's EDBT12 paper
 A typical MapReduce framework consists of two user-defined functions: map and reduce. For every record in the input data sets, map function will partition it into a sorted set of intermediate results. The reduce function fetches the data, from individual partition. provided by the map function, Reduce process produces the final output data. The map and reduce function could be fomally defined: \(map(k_{1},v_{1}) \rightarrow list(k_{2}, v_{2}) \) and \(reduce(k_{2},list(v_{2})) \rightarrow list(k_{3}, v_{3}) \).
-

@@ -127,32 +127,32 @@ Assume that a data point $g$ is dominated by a pivot point $b_i$, all instances 
   \centerline{\psfig{file=figs/computeA_1.eps, width=4.0in}}
   \caption{Pruning Power}
   \vspace{-15pt}
-  \label{figure:pruning}
+  \label{figure:A1A2}
 \end{figure}
 
-Now the problem turns to studying the pruning power of a pivot point $g$. We make the assumption that our dataset is defined in the hypercube $[0,1]^d$ and data points are uniformly distributed. Followed by this assumption, the number of data points located in a region could be represented by the region's volume. To simplify the model of pruning power, only one pivot point divides the angle area $V^A$ to two parts denoted as $A_1$ and $A_2$. $A_1$ lies in the left bottom to g, and $A_2$ lies in the right top to g. Figure 2 depicts the scenario. The pruning power could be represented by how many data points in $A_2$ is able to repeatedly apply $A_1$ without comparing one by one, since intermediate sum of instance probability in $A_1$ has been computed well. Therefore, given a pivot point $g$, the pruning power of $g$ is defined as:
+Now the problem turns to studying the pruning power of a pivot point $g$. We make the assumption that our dataset is defined in the hypercube $[0,1]^d$ and data points are uniformly distributed. Followed by this assumption, the number of data points located in a region could be represented by the region's volume. To simplify the model of pruning power, only one pivot point exists and it divides the angle area into two parts denoted as $A_1$ and $A_2$. $A_1$ lies in the left bottom to g, and $A_2$ lies in the right top to g. Figure~\ref{figure:A1A2} depicts the scenario. The pruning power could be represented by how many data points in $A_2$ is able to repeatedly use $A_1$ directly without comparing one by one, since intermediate sum of instance probability in $A_1$ has been computed well. Therefore, given a pivot point $g$, the pruning power of $g$ is defined as:
 
 \begin{equation}
 PP(g) = A_1(x_g, y_g, \phi_1, \phi_2) * A_2(x_g, y_g, \phi_1, \phi_2)
 \end{equation}
-where $A_1$ and $A_2$ is two function, which computes corresponding area shown in Figure 2.
+where $A_1$ or $A_2$ is a function, which computes corresponding area shown in Figure~\ref{figure:A1A2}.
 
-In~\cite{ref:AngularPartition}, how to compute $A_2$ is introduced. Three cases are considered in formula induction: one is $0 \leq \phi_1 < \phi_2 \leq \pi/4$, the other is $\pi/4 \leq \phi_1 < \phi_2 \leq \pi/2$, and the final one is $0 \leq \phi_1 \leq \pi/4 \le \phi_2 \leq \pi/2$. The detailed computing formula is in Equation~\ref{Equ:A2}.
+In~\cite{ref:AngularPartition}, how to compute $A_2$ is introduced. Three cases are considered in formula induction: one is $0 \leq \phi_1 < \phi_2 \leq \pi/4$, the other is $\pi/4 \leq \phi_1 < \phi_2 \leq \pi/2$, and the final one is $0 \leq \phi_1 \leq \pi/4 \le \phi_2 \leq \pi/2$. The detailed formula is shown in Equation~\ref{Equ:A2}.
 
 \begin{equation}
 \label{Equ:A2}
 A_2 = 
 \begin{cases}
 & \int_{x_g}^{1} \int_{x tan \phi_1}^{x tan \phi_2} dydx- \int_{x_g}^{min(1, \frac{y_g}{tan \phi_1})} \int_{x tan \phi_1}^{y_g} dydx  \\
-& \qquad \qquad \qquad \qquad \qquad \mbox{if } 0 \leq \phi_1 < \phi_2 \leq \pi/4 \\ 
+& \qquad \qquad \qquad \qquad \mbox{if } 0 \leq \phi_1 < \phi_2 \leq \pi/4 \\ 
 & A_2(g_y, g_x, \frac{\pi}{2} - \phi_2, \frac{\pi}{2} - \phi_1)\\
-& \qquad \qquad \qquad \qquad \qquad \mbox{if } \pi/4 \leq \phi_1 < \phi_2 \leq \pi/2 \\
+& \qquad \qquad \qquad \qquad \mbox{if } \pi/4 \leq \phi_1 < \phi_2 \leq \pi/2 \\
 & A_2(x_g, y_g, \phi_1, \frac{\pi}{4}) + A_2(g_y, g_x, \frac{\pi}{2} - \phi_2, \frac{\pi}{4}) \\
-& \qquad \qquad \qquad \qquad \qquad \mbox{if } 0 \leq \phi_1 \leq \pi/4 \le \phi_2 \leq \pi/2
+& \qquad \qquad \qquad \qquad \mbox{if } 0 \leq \phi_1 \leq \pi/4 \le \phi_2 \leq \pi/2
 \end{cases}
 \end{equation}
 
-Similarly, we compute the area of $A_1$. As $y_g = x_g * tan \phi_g$, $A_1$ is the region defined by $0 \le x \le x_g$, and $x tan(\phi_1) \le y \le min(x tan(\phi_2), y_g)$. Therefore, $A_1$ is represented by 
+Similarly, we compute the area of $A_1$, which is the region defined by $0 \le x \le x_g$, and $x tan(\phi_1) \le y \le min(x tan(\phi_2), y_g)$. Therefore, $A_1$ is represented by 
 
 \begin{equation}
 A_1 = \int_{0}^{x_g} \int_{x tan(\phi_1)}^{ min(x tan(\phi_2), y_g) } dydx
@@ -167,33 +167,43 @@ PP(g) = & (\int_{x_g}^{1} \int_{x tan \phi_1}^{x tan \phi_2} dydx- \int_{x_g}^{m
 \end{aligned}
 \end{equation}
 
-We now evaluate the pruning power of a given point via an experiment. $N = 8$ partitions are defined by $\phi_i$ for $1< i <8$, and the pivot point $g$ is always located in $V^A$. $\phi_i$ is tested only when $0 < \phi_i < \pi/4$. Notice
-that the upper partitions ($\pi/4 < \phi_i < \pi/2$) are symmetrical to these partitions ($0 < \phi_i < \pi/4$). For each $x_g$, we obtain three points where $y_g$ is computed by $y_g = x_g * tan(\phi_g)$ for different $\phi_g$ respectively. Figure~\ref{figure:midLine} shows the cases when three points are located in three positions based on one x value. The points are located in lines at angle of $\phi_1$, $\phi_2$, and the middle line's angle is between $\phi_1$ and $\phi_2$. 
+It is found that the pruning power is dependent on the cardinality of $P$ and the placement of $P$ in the partition. Given the formula of pruning power computation, the set of pivot points is studied via experiment. We assume the 2-dimensional space is partitioned into 4 partitions. In each angle partition, the same experiment is executed.
 
-$\phi_1$ and $\phi_2$ is randomly set in the experiment. And the pivot points are selected when $x$ value varies from 0.1 to 0.9. Figure~\ref{figure:testArea} depicts the experiment result. we find that most points in mid lines generate the largest pruning power, compared to points in lines of $\phi_1$ and $\phi_2$.
 
+We firstly study the relationship between the number of pivot points and the pruning power. We iteratively sample N points, from 1 to 100. For every iteration, pivot points are sampled 10,000 times. We obtain the pruning power of every iteration based on the sum of all 10,000 samples' pruning power value. For example, when $N=3$, three nodes are uniformly sampled in one partition. the sum of pruning powers of the three points is repeated 10,000 times and the addition of all is the final result. The experiment results shows that the pruning power increases with the elevation of the number of pivot points. Secondly, the distribution of pivot points is studied. We assume that only 1 pivot point is put in the partition. After sampling 10,000 times, we are looking for the location of pivot point, which has the most pruning power. The experiment shows that the points in the middle area have the most pruning power.  
+
+Given the number of pivot points, we propose an efficient strategy to utilize the pruning power of pivot points. Pivot points in $P$ are selected every even interval of x, and lied in a line $L$ at an angle of $\phi_3$ ($ \phi_2 < \phi_3 < \phi_1 $) (See Figure~\ref{figure:midLine}).
+
+% For each sample with an $x_g$, we obtain three pivot point candidates. Then each pivot point candidate ($x_g$, $y_g$) is obtained by $y_g = x_g * tan(\phi_g)$, where $\phi_g$ is predefined. Figure~\ref{figure:midLine} shows the cases when three pivot point candidates stand in three positions when the angle changes. The three points are located in lines at angle of $\phi_1$, $\phi_2$, and an angle between $\phi_1$ and $\phi_2$. The pivot points are selected when $x$ value varies from 0.1 to 0.9. Figure~\ref{figure:testArea} depicts the experiment result. From the smallest x value to the largest, pivot point candidates upon top line always outperform than other two lines. It is also found that points in the center area ($0.5 \leq x_g \leq 0.8$) have more pruning power.
+
+
+\begin{figure}[!b]
+\vspace{-15pt}
+\centering
+  \centerline{\psfig{file=figs/midLine.eps, width=3.5in}}
+  \caption{Pivot Points placement}
+  \vspace{-15pt}
+  \label{figure:midLine}
+\end{figure}
 
 \begin{figure}[t]
 \vspace{-15pt}
 \centering
-  \centerline{\psfig{file=Exper/testArea.eps, width=3.5in}}
+  \centerline{\psfig{file=Exper/MostPruningPower/3d.eps, width=3.5in}}
   \caption{line}
   \vspace{-15pt}
   \label{figure:testArea}
 \end{figure}
 
-Based on the experiment result, in order to maximize the pruning power of pivot point, we let pivot points lie in a line $L$ at an angle of $\phi_3$, where $\phi_3 = \frac{\phi_1 + \phi_2}{2}$. Given an input number $N_p$ of how many pivot points are put, pivot points are selected every even interval of x. Take Figure~\ref{figure:midLine} as an example. Pivot points are all located in a line at an angle of $\phi_3$, and $b_{i-1}$ dominates b{i}, for $1 \le i  \le n$. As a result, given any point $p$ dominated by $b_i$, instances in $A_i$ dominate $p$ 
+% Based on the experiment result, in order to maximize the pruning power of pivot point, we let pivot points lie in a line $L$ at an angle of $\phi_2$. Given an input number $N_p$ of how many pivot points are put, 
 
-\begin{figure}[!b]
-\vspace{-15pt}
-\centering
-  \centerline{\psfig{file=figs/midLine.eps, width=4.0in}}
-  \caption{line}
-  \vspace{-15pt}
-  \label{figure:midLine}
-\end{figure}
 
-The detailed computing procedure is as follows. Pivot points set $P$ is selected based on $N_p$, $\phi_1$ and $\phi_2$ provided. At the beginning of the reduce phase, the local machine knows which objects are in this partition. For each $A_i$, it holds an object vector $V(o_1, o_2, \dots, o_m)$ that maintains the sum of existing instances' probability. Given an instance $p$, we firstly find the nearest pivot point $b_i$ which dominates $p$, and area set $S_A$ which partially dominates $p$. Another object vector $V(o_1, o_2, \dots, o_m)$ is maintained for comparing domination relationship in $S_A$. If any instance in areas of $S_A$, the instance's existing probability is counted to the object vector. Then, aggregated by the object vector of $A_i$ precomputed before, the product of every element in the object vector is the final $SkyProb^+(p)$.
+Given pivot point set $P$ is placed well, the detailed computing procedure is as follows. Remember $A_i$ consists of an n-dimensional vector $V_i = [p_{r1},p_{r2},\dots,p_{rn}]$, where n is the number of objects in this partition. $V_i$ is maintained in the first step. At the beginning of the reduce phase, the local machine knows which objects are in this partition. Given an instance $p$ of object $O_q$, we firstly search the nearest pivot point $b_i$ dominated by $p$. Then the instance probability is added to $p_{rq}$ in $V_i$. We iterate every instance in the partition and maintain $V_i$ ($ 1 \leq i \leq n$). 
+
+After $V_i$ is finished maintaining, every instance $p$ is iterated for computing $SkyProb^+(p)$. Assume an instance $p$ lies in the area $A_m$. we looks for the nearest $b_i$ which dominates $p$. $A_i$ fully dominates $p$. In addition, we look for area set $S_A$ which partially dominates $p$. $S_A$ = $\{A_j| i < j \leq m \}$.
+An additional vector $[p_{r1},p_{r2},\dots,p_{rn}]$ is maintained for comparing domination relationship in $S_A$. If any instance in $S_A$ dominate $p$, the instance's existing probability is counted to the object vector. Then, aggregated by the vectors $V_j$ ($j \leq i$) precomputed already, the product of every element in the object vector is the final $SkyProb^+(p)$.
+
+Then skyline likelihood of every object in $V^A$ is able to be easily obtained by Equation~\ref{objectUpper}. We could prune those unqualified objects with $SKYProb(O)$ less than $p$, and keep remained ones in an object set $C_o$.
 
 \begin{defn}
 \label{defn:canObj}
@@ -205,5 +215,4 @@ Let $C_o$ be an object set where skyline probability of each object is at least 
 Let $I$ be an instance set where some instance might dominate instances in $C_o$.
 \end{defn}
 
-At the end of the first MapReduce phase, we collect candidate object set $C_o$ and influencing instance set $I$. Definition~\ref{defn:canObj} gives the definition of $C_o$, and any object $o$ with $SkyProb^+(0)$ larger than $p$ is in $C_o$. Definition~\ref{defn:influnceInst} gives the definition of $I$, and any instance $p$ with instance skyline probability $SkyProb(p)$ larger than $0$ is gathered in $C_o$. In the final data gathered after the first MapReduce phase, there are two types of instances remained. In the first case, the instance is belonged to some object in $C_o$ and it is also in $I$. In the second case, the instance is only belong to $I$. As soon as the data is collected, it is able to move forward the merging phase.
-
+Definition~\ref{defn:influnceInst} gives the definition of $I$, and any instance $p$ with instance skyline probability $SkyProb+(p)$ larger than $0$ is gathered in $C_o$. In other words, after the first MapReduce phase, there are two types of instances remained. In the first case, the instance is belonged to some object in $C_o$ and it is also in $I$. In the second case, the instance is only within $I$. As soon as the data is collected, it is able to move forward the merging phase.

@@ -10,6 +10,21 @@ five-dimensional space. The parallel solutions were executed with
 eight nodes by default. Simulation results were recorded after the
 system model reached a steady state.
 
+
+\subsection{Experimental Evaluation}
+To compare the performance between three-phase, two-phase Hadoop implementations in one cluster and the straightforward implementation on a single machine, we implemented the three algorithms and conducted a experimental evaluation.
+
+There're several observations found in the experiment:
+
+
+1). Let me first introduce the result of single-machine algorithm. With increasing size of the dataset, the computing time is increasing exponentially. And the most arduous part in the whole computing procedure is in Equation2.
+
+In the first experiment set, we randomly generated 100 objects, and 1 thousand instances per object. The whole computing procedure for Equation2 involves computing the local skyline probability between any pair of two objects. That is 215.6 seconds in our result. In addition, it needs 0.2s for Equation3 process and 0.02s for Equation4 process. Therefore, the whole running time is less than 216s. It can be found that 99\% of the time lies on Equation2. However, in our hadoop implementation, the whole query time is about 15 mins. Therefore, if the dataset is small, the time consumed in Hadoop is less than one in single-machine algorithm.
+
+In the second experiment set, we randomly generated 100 objects, and 10 thousand instances per object. The test shows that it needs 5 seconds to run Equation2 for every pair of objects. Since we have \(C_{100}^{2}\) pairs, and the time in all is estimated to be more than 7 hours. However, the time consumed in the hadoop implementation is about 4 hours.
+
+2). When compared between two Hadoop implementations, the two-phase Mapreduce framework is always faster than three-phase one. The reason is that the amount of computing is little in the third phase of the three-phase framework, and merging the second and third phase into one phase reduces one copy of reading data from the HDFS to memory, increasing I/O efficiency.
+
 \subsection{Summary}
 EX (Exhaustive) is an exhaustive algorithm for computing skyline probability in parallel environment. Our approach use two optimized way to speed up the skyline probability computation: one is Rectangle optimization in the first MapReduce phase, the other is one in the second phase.
 
