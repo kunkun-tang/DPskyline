@@ -1,3 +1,20 @@
+\begin{table}[t]
+\begin{center}
+    \begin{tabular}{|c|p{2cm}|}
+    \hline
+    Parameters & Default Values\\ \hline
+    \hline
+    $d$ (dimensions) & 3 \\ \hline
+    $t$ (No. of machines) & 10 \\ \hline
+    $|O|$ (object number) & $10^4$ \\ \hline
+    $|P|$ (No. of pivot points in $P$) & 5 \\  \hline
+    $l$ (No. partitions in Second Phase) & 5 \\   \hline
+    \end{tabular}
+\end{center}
+\vspace{-8pt} \caption{Experimental parameter values.}
+\label{tab_para} \vspace{-8pt}
+\end{table}
+
 In this section, we first evaluate our proposed Rectangle pruning methods on a single node. Then, we implemented our MapReduce Distributed System using Akka for communication between nodes. The introduction of MapReduce framework
 For fair comparison, we developed a single MapReduce phase solution as a baseline solution. All solutions were implemented in Java and Scala.
 
